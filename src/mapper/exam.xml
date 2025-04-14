@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="exam">
+  <resultMap type="vo.ExamVO" id="map1">
+  	<result property="q_no" column="q_no" />
+  	<collection property="q_list" ofType="vo.QuestVO" select="question.select_question_by" column="q_no" />
+  </resultMap>
+
+  <select id="select_exam_by_exf" resultMap="map1" parameterType="String">
+    select * from exam where exf_no = #{exf_no} and del_yn = 0
+  </select>
+  
+  <select id="select_exam" resultType="vo.ExamVO">
+    select * from exam where del_yn = 0
+  </select>
+  
+  <select id="select_exam_by_ex" resultType="vo.ExamVO" parameterType="String">
+    select * from exam where ex_no = #{ex_no} and del_yn = 0
+  </select>
+  
+  <select id="select_exam_by_ex_exf" resultType="vo.ExamVO" parameterType="String">
+    select * from exam where exf_no = #{exf_no} and del_yn = 0
+  </select>
+  
+  <select id="select_exam_dis_exf" resultType="vo.ExamVO">
+  	select distinct exf_no from exam where and del_yn = 0
+  </select>
+  
+  <insert id="insert_exam" parameterType="Map">
+  	insert into exam (q_no, exf_no) values (#{q_no}, #{exf_no})
+  </insert>
+  
+  <update id="update_exam" parameterType="Map">
+  	update exam set q_no = #{q_no}, exf_no = #{exf_no}, del_yn = 0 where ex_no = #{ex_no}
+  </update>
+  
+  <delete id="delete_exam_by_exf" parameterType="String">
+	delete from exam where exf_no = #{exf_no}
+  </delete>
+  
+  <update id="update_exam_del" parameterType="String">
+  	update exam set del_yn = 1 where exf_no = #{exf_no}
+  </update>
+  
+  <insert id="insert_exam_for" parameterType="Map">
+  	insert into exam (q_no, exf_no, del_yn) values
+  	<foreach collection="list" item="vo" separator=",">
+  		(#{vo.q_no}, #{vo.exf_no}, 0)
+  	</foreach>
+  </insert>
+</mapper>

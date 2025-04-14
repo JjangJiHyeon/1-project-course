@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="question">
+	<select id="select_question" resultType="vo.QuestVO">
+		select * from question 
+	</select>
+
+	<select id="select_question_by" resultType="vo.QuestVO" parameterType="String">
+		select * from question where q_no = #{q_no}
+	</select>
+	
+	<insert id="insert_question" parameterType="Map">
+ 		insert into question (q_text, q_answer, q_score, first, second, third, forth) values (#{q_text}, #{q_answer}, #{q_score}, #{first}, #{second}, #{third}, #{forth})
+ 	</insert>
+ 	
+ 	<update id="update_question" parameterType="Map">
+ 		update question set q_text = #{q_text}, q_answer = #{q_answer}, q_score = #{q_score}, first = #{first}, second = #{second}, third = #{third}, forth = #{forth} where q_no = #{q_no}
+ 	</update>
+ 	
+ 	<delete id="delete_question" parameterType="String">
+ 		delete from question where q_no = #{q_no}
+ 	</delete>
+</mapper>

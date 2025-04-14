@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="subject">
+
+	<select id="subjectAll" resultType="vo.SubVO">
+		SELECT * FROM subject
+	</select>
+	<select id="subject_stu" parameterType="String"
+		resultType="vo.StuSubInfoVO">
+		SELECT * FROM stu_sub_info where stu_no=#{stu_no}
+	</select>
+
+	<insert id="insertSubject" parameterType="vo.SubVO">
+		INSERT INTO subject (sub_name, sub_time, sub_info, sub_cnt, prof_no,dept_no)
+		VALUES ( #{sub_name}, #{sub_time}, #{sub_info}, #{sub_cnt},
+		#{prof_no},#{dept_no});
+	</insert>
+
+	<update id="updateSubject" parameterType="vo.SubVO">
+		UPDATE subject
+		SET
+		sub_name = #{sub_name},
+		sub_time = #{sub_time},
+		sub_info = #{sub_info},
+		sub_cnt = #{sub_cnt},
+		prof_no = #{prof_no},
+		dept_no = #{dept_no}
+		WHERE sub_no = #{sub_no}
+	</update>
+
+	<delete id="deleteSubject" parameterType="String">
+		DELETE FROM subject
+		WHERE sub_no = #{sub_no};
+	</delete>
+	<insert id="insert_stu_sub" parameterType="vo.StuSubInfoVO">
+		INSERT INTO stu_sub_info(stu_no,sub_no)
+		VALUES(#{stu_no},#{sub_no})
+	</insert>
+	<select id="stusub_by_stuno" resultType="vo.StuSubInfoVO">
+		SELECT * FROM stu_sub_info
+		WHERE stu_no=#{stu_no}
+	</select>
+	<select id="chosen_subject" resultType="vo.SubVO">
+		select distinct s.* from subject s 
+		inner join stu_sub_info ss
+		on s.sub_no = ss.sub_no
+		inner join student stu on ss.stu_no = #{stu_no}
+	</select>
+</mapper>
+
+ 
+  

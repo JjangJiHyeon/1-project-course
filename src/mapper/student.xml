@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="student">
+
+	<!-- 전체 학생 조회 -->
+	<select id="stu_all" resultType="vo.StuVO">
+		SELECT * FROM student
+	</select>
+
+	<!-- 학생 삽입 -->
+	<insert id="insert_stu" parameterType="vo.StuVO">
+		INSERT INTO student
+		(dept_no, stu_id, stu_pw, stu_name, stu_phone,
+		stu_email)
+		VALUES
+		(#{dept_no}, #{stu_id}, #{stu_pw}, #{stu_name}, #{stu_phone},
+		#{stu_email})
+	</insert>
+
+	<!-- 학생 정보 업데이트 -->
+	<update id="update_stu" parameterType="Map">
+		UPDATE student
+		SET stu_name
+		= #{stu_name},
+		stu_email = #{stu_email},
+		stu_id = #{stu_id},
+		stu_pw =
+		#{stu_pw},
+		stu_phone = #{stu_phone},
+		dept_no = #{dept_no}
+		WHERE stu_no =
+		#{stu_no}
+	</update>
+
+	<!-- 학생 삭제 -->
+	<delete id="delete_stu" parameterType="String">
+		DELETE FROM student
+		WHERE
+		stu_no = #{stu_no}
+	</delete>
+
+	<!-- 전체 부서 조회 -->
+	<select id="dept_all" resultType="vo.DeptVO">
+		SELECT * FROM department
+	</select>
+
+	<!-- 시험 프레임 목록 조회 -->
+	<select id="get_exf_list" resultType="vo.ExFrameVO">
+		SELECT * FROM exam_frame
+		where del_yn=0
+	</select>
+	<select id="get_exf_stu" resultType="vo.ExFrameVO" parameterType="String">
+		select distinct exf.* from exam_frame exf
+		inner join subject sub
+		inner join stu_sub_info ss
+		on exf.sub_no = sub.sub_no
+		and ss.sub_no = exf.sub_no
+		and ss.stu_no = #{stu_no}
+		where exf.del_yn = 0;
+	</select>
+
+	<!-- 특정 시험 프레임의 문제 목록 조회 -->
+	<select id="get_quest_list" parameterType="String"
+		resultMap="questionMap">
+		SELECT
+		q.*,
+		exf.exf_no AS frame_no,
+		exf.exf_name AS frame_name,
+		exf.score AS score
+		FROM question q
+		INNER JOIN exam e ON q.q_no = e.q_no
+		INNER JOIN
+		exam_frame exf ON e.exf_no = exf.exf_no
+		WHERE exf.exf_no = #{exf_no}
+		and exf.del_yn=0
+	</select>
+
+	<!-- 문제 매핑 -->
+	<resultMap id="questionMap" type="vo.QuestVO">
+		<id property="q_no" column="q_no" />
+		<result property="q_text" column="q_text" />
+		<result property="first" column="first" />
+		<result property="second" column="second" />
+		<result property="third" column="third" />
+		<result property="forth" column="forth" />
+		<result property="q_answer" column="q_answer" />
+		<result property="q_score" column="q_score" />
+		<result property="score" column="score" />
+		<association property="exam_frame" javaType="vo.ExFrameVO">
+			<id property="exf_no" column="frame_no" />
+			<result property="exf_name" column="frame_name" />
+		</association>
+	</resultMap>
+	<select id="get_exf_one" parameterType="String"
+		resultType="vo.ExFrameVO">
+		SELECT * from exam_frame
+		where exf_no =#{exf_no}
+		and del_yn=0
+	</select>
+	<insert id="insert_stuans" parameterType="Map">
+		insert into
+		stu_ans(ex_no,q_no,es_input,es_correct,stu_no,exf_no)
+		values(#{ex_no},#{q_no},#{es_input},#{es_correct},#{stu_no},#{exf_no})
+	</insert>
+	<select id="get_correct_list" resultType="vo.CorrectVO">
+		SELECT q.q_no,
+		q.q_answer, s.es_input,
+		CASE WHEN s.es_correct = 0
+		THEN '오답'
+		WHEN
+		s.es_correct = 1 THEN '정답' ELSE '기타'
+		END AS result FROM question q
+		INNER JOIN stu_ans s ON q.q_no = s.q_no
+	</select>
+	<select id="get_exam_list" resultType="vo.ExFrameVO">
+		select distinct
+		f.exf_no,f.exf_name from subject s
+		inner join exam_frame f
+		inner join
+		exam e on s.sub_no = f.sub_no
+		and
+		f.exf_no = e.exf_no
+		and f.del_yn=0
+		and e.del_yn=0
+		and e.status=0
+		order by f.exf_no
+
+	</select>
+	<select id="stu_exam_list" parameterType="String" resultType="vo.ExFrameVO">
+		select distinct
+		f.exf_no,f.exf_name from subject s
+		inner join exam_frame f
+		inner join exam e
+		inner join stu_ans sa
+		on s.sub_no = f.sub_no
+		and f.exf_no = e.exf_no
+		and f.del_yn=0
+		and e.del_yn=0
+		and e.status=0
+		and sa.stu_no=#{stu_no}
+        and sa.ex_no=e.ex_no
+		order by f.exf_no;
+	</select>
+	<select id="get_exam_exf" parameterType="String"
+		resultType="vo.ExamVO">
+		select * from exam
+		where exf_no = #{exf_no}
+		and del_yn=0
+	</select>
+	<select id="get_stuans_all" resultType="vo.StuAnsVO"
+		parameterType="String">
+		select * from stu_ans
+		where stu_no = #{stu_no}
+	</select>
+	<update id="update_status" parameterType="String">
+		update exam set
+		status=0
+		where ex_no = #{ex_no}
+	</update>
+
+
+</mapper>

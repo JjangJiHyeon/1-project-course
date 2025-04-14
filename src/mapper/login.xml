@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="login">
+
+   <!-- Admin login -->
+   <select id="validateAdminLogin" parameterType="map" resultType="vo.RootVO">
+       SELECT *
+       FROM root 
+       WHERE root_id = #{id} AND root_pw = #{password}
+   </select>
+
+   <!-- Student login -->
+   <select id="validateStudentLogin" parameterType="map" resultType="vo.StuVO">
+       SELECT * 
+       FROM student 
+       WHERE stu_id = #{id} AND stu_pw = #{password}
+   </select>
+
+   <!-- Professor login -->
+   <select id="validateProfessorLogin" parameterType="map" resultType="vo.ProfVO">
+       SELECT *
+       FROM professor 
+       WHERE prof_id = #{id} AND prof_pw = #{password}
+   </select>
+
+</mapper>

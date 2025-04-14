@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dept">
+<select id="dept_All" resultType="vo.DeptVO">
+	SELECT * FROM department
+</select>
+
+<update id="update_dept" parameterType="Map">
+	UPDATE DEPARTMENT
+	set dept_name = #{dept_name}
+	WHERE dept_no = #{dept_no};
+</update>
+<insert id="insert_dept" parameterType="vo.DeptVO">
+ 	INSERT INTO department(dept_no, dept_name)
+ 	VALUES(#{dept_no},#{dept_name});
+</insert>
+<delete id="delete_dept" parameterType="String">
+	DELETE FROM department
+	WHERE dept_no = #{dept_no};
+</delete> 	
+<select id="select_dept" resultType="vo.DeptVO">
+ SELECT * FROM department
+  </select>
+<select id="getAllDepartments" resultType="vo.DeptVO">
+ SELECT dept_name FROM department;
+  </select>
+<select id="getDepartmentIdByName" parameterType="String" resultType="String">
+SELECT dept_no FROM department WHERE dept_name = #{dept_name};
+ </select>
+<!--  학과 ID로 학과 이름 조회  -->
+<select id="getDepartmentNameById" parameterType="String" resultType="String"> 
+SELECT dept_name FROM department WHERE dept_no = #{dept_no}
+ </select>
+</mapper>
+
+ 
+  

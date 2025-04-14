@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="prof">
+	<!-- 강사 전체 조회 -->
+	<select id="select_prof" resultType="vo.ProfVO">
+		select * from professor
+	</select>
+
+	<select id="select_prof_sub" resultType="vo.ProfSubVO"
+		parameterType="String">
+		select p.prof_no, p.dept_no, p.prof_name, s.sub_no,
+		s.sub_name from
+		professor p
+		inner join subject s
+		on p.prof_no = s.prof_no
+		where p.prof_no = #{prof_no}
+	</select>
+
+	<insert id="insert_prof" parameterType="Map">
+		insert into professor
+		(dept_no, prof_name, prof_email, prof_id, prof_pw)
+		values (#{dept_no},
+		#{prof_name}, #{prof_email}, #{prof_id},
+		#{prof_pw});
+	</insert>
+
+	<update id="update_prof" parameterType="Map">
+		update professor
+		set
+		dept_no = #{dept_no},
+		prof_name = #{prof_name},
+		prof_email =
+		#{prof_email},
+		prof_id = #{prof_id},
+		prof_pw = #{prof_pw}
+		where prof_no =
+		#{prof_no};
+	</update>
+
+	<delete id="delete_prof" parameterType="String">
+		delete from professor
+		where prof_no = #{prof_no};
+	</delete>
+
+	<select id="select_stu_by_sub" resultType="vo.SubStuExVO" parameterType="String">
+		select i.sub_no, j.sub_name, s.stu_no, s.stu_name, e.exf_no, f.exf_name, f.score, q.q_no, q.q_score, a.es_input, a.es_correct,
+			case 
+				when e.exf_no is null then '미응시' 
+				else '응시'
+	        end as status
+		from stu_sub_info i
+		left join subject j on i.sub_no = j.sub_no
+		left join student s on i.stu_no = s.stu_no
+		left join stu_ans a on i.stu_no = a.stu_no
+		left join exam e on a.exf_no = e.exf_no
+		left join exam_frame f on a.exf_no = f.exf_no
+		left join question q on a.q_no = q.q_no
+		where i.sub_no = #{sub_no}
+		group by i.sub_no, j.sub_name,s.stu_no,s.stu_name, a.exf_no, a.es_correct, q.q_no, a.es_input
+		order by s.stu_no
+	</select>
+	
+	<select id="search_stu_by_stu_no" resultType="vo.SubStuExVO" parameterType="Map">
+		select i.sub_no, j.sub_name, s.stu_no, s.stu_name, e.exf_no, f.exf_name, f.score, q.q_no, q.q_score, a.es_input, a.es_correct,
+			case 
+				when e.exf_no is null then '미응시' 
+				else '응시'
+	        end as status
+		from stu_sub_info i
+		left join subject j on i.sub_no = j.sub_no
+		left join student s on i.stu_no = s.stu_no
+		left join stu_ans a on i.stu_no = a.stu_no
+		left join exam e on a.exf_no = e.exf_no
+		left join exam_frame f on a.exf_no = f.exf_no
+		left join question q on a.q_no = q.q_no
+		where i.sub_no = #{sub_no} and s.stu_no like concat('%', #{stu_no}, '%')
+		group by i.sub_no, j.sub_name,s.stu_no,s.stu_name, a.exf_no, a.es_correct, q.q_no, a.es_input
+		order by s.stu_no
+	</select>
+
+	<select id="search_stu_by_stu_name" resultType="vo.SubStuExVO" parameterType="Map">
+		select i.sub_no, j.sub_name, s.stu_no, s.stu_name, e.exf_no, f.exf_name, f.score, q.q_no, q.q_score, a.es_input, a.es_correct,
+			case 
+				when e.exf_no is null then '미응시' 
+				else '응시'
+	        end as status
+		from stu_sub_info i
+		left join subject j on i.sub_no = j.sub_no
+		left join student s on i.stu_no = s.stu_no
+		left join stu_ans a on i.stu_no = a.stu_no
+		left join exam e on a.exf_no = e.exf_no
+		left join exam_frame f on a.exf_no = f.exf_no
+		left join question q on a.q_no = q.q_no
+		where i.sub_no = #{sub_no} and s.stu_name like concat('%', #{stu_name}, '%')
+		group by i.sub_no, j.sub_name,s.stu_no,s.stu_name, a.exf_no, a.es_correct, q.q_no, a.es_input
+		order by s.stu_no
+	</select>
+	
+	<select id="search_stu_by_exf_name" resultType="vo.SubStuExVO" parameterType="Map">
+		select i.sub_no, j.sub_name, s.stu_no, s.stu_name, e.exf_no, f.exf_name, f.score, q.q_no, q.q_score, a.es_input, a.es_correct,
+			case 
+				when e.exf_no is null then '미응시' 
+				else '응시'
+	        end as status
+		from stu_sub_info i
+		left join subject j on i.sub_no = j.sub_no
+		left join student s on i.stu_no = s.stu_no
+		left join stu_ans a on i.stu_no = a.stu_no
+		left join exam e on a.exf_no = e.exf_no
+		left join exam_frame f on a.exf_no = f.exf_no
+		left join question q on a.q_no = q.q_no
+		where i.sub_no = #{sub_no} and f.exf_name like concat('%', #{exf_name}, '%')
+		group by i.sub_no, j.sub_name,s.stu_no,s.stu_name, a.exf_no, a.es_correct, q.q_no, a.es_input
+		order by s.stu_no
+	</select>
+
+	<select id="search_stu_by_status" resultType="vo.SubStuExVO" parameterType="Map">
+		select * from 
+		(
+			select i.sub_no, j.sub_name, s.stu_no, s.stu_name, e.exf_no, f.exf_name, f.score, q.q_no, q.q_score, a.es_input, a.es_correct,
+				case 
+					when e.exf_no is null then '미응시' 
+					else '응시'
+		        end as status
+			from stu_sub_info i
+			left join subject j on i.sub_no = j.sub_no
+			left join student s on i.stu_no = s.stu_no
+			left join stu_ans a on i.stu_no = a.stu_no
+			left join exam e on a.exf_no = e.exf_no
+			left join exam_frame f on a.exf_no = f.exf_no
+			left join question q on a.q_no = q.q_no
+			where i.sub_no = #{sub_no}
+			group by i.sub_no, j.sub_name,s.stu_no,s.stu_name, a.exf_no, a.es_correct, q.q_no, a.es_input	
+		) as subquery
+		where status like concat('%', #{status}, '%')
+		order by stu_no
+	</select>
+
+	<select id="search_stu_by_sub_stu" resultType="vo.SubStuExVO" parameterType="Map">
+		select s.stu_no, s.stu_name, f.exf_name, a.q_no, q.q_answer, a.es_input, a.es_correct, q.q_score from stu_ans a
+		inner join student s
+		inner join stu_sub_info i
+		inner join exam_frame f
+		inner join question q
+		on a.stu_no = s.stu_no and a.exf_no = f.exf_no and a.q_no = q.q_no
+		where a.exf_no = #{exf_no} and a.stu_no = #{stu_no}
+		group by s.stu_no,
+		s.stu_name, f.exf_name, a.q_no, q.q_answer, a.es_input, a.es_correct
+	</select>
+
+	<delete id="delete_stu_ans" parameterType="String">
+		delete from stu_ans
+		where exf_no = #{exf_no}
+	</delete>
+	<select id="getProfessorIdByName" resultType="String"
+		parameterType="String">
+		SELECT prof_no FROM professor WHERE prof_name =
+		#{prof_name}
+	</select>
+	<!-- 교수 번호에 해당하는 이름을 조회하는 SQL -->
+	<select id="getProfessorNameById" resultType="String">
+		SELECT prof_name
+		FROM professor WHERE prof_no = #{prof_no}
+	</select>
+	<select id="getAllProfessors" resultType="vo.ProfVO">
+		SELECT prof_name FROM professor
+	</select>
+</mapper>

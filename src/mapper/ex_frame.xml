@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ex_frame">
+  <select id="select_ex_frame" resultType="vo.ExFrameVO">
+    select * from exam_frame where del_yn = 0;
+  </select>
+  
+  <select id="select_ex_frame_sub" parameterType="String" resultType="vo.ExFrameVO">
+    select * from exam_frame where del_yn = 0 and sub_no=#{sub_no}
+  </select>
+  
+  <select id="select_ex_frame_by" resultType="vo.ExFrameVO" parameterType="String">
+  	select * from exam_frame where exf_no = #{exf_no} and del_yn = 0
+  </select>
+  
+  <select id="search_ex_frame_by_exf" resultType="vo.ExFrameVO" parameterType="Map">
+  	select * from exam_frame where del_yn = 0 and sub_no = #{sub_no} and exf_no like concat('%', #{exf_no}, '%') 
+  </select>
+  
+  <select id="search_ex_frame_by_name" resultType="vo.ExFrameVO" parameterType="Map">
+  	select * from exam_frame where del_yn = 0 and sub_no = #{sub_no} and exf_name like concat('%', #{exf_name}, '%')
+  </select>
+  
+  <insert id="insert_ex_frame" parameterType="vo.ExFrameVO">
+  	insert into exam_frame (exf_name, prof_no, sub_no, score, del_yn) values (#{exf_name}, #{prof_no}, #{sub_no}, #{score}, 0)
+  	
+  	<selectKey resultType="String" keyProperty="exf_no" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
+  
+  <update id="update_ex_frame" parameterType="Map">
+  	update exam_frame set exf_name = #{exf_name}, prof_no = #{prof_no}, sub_no = #{sub_no}, score = #{score} where exf_no = #{exf_no}
+  </update>
+  
+  <delete id="delete_ex_frame" parameterType="String">
+  	delete from exam_frame where exf_no = #{exf_no}
+  </delete>
+  
+  <update id="update_ex_frame_del" parameterType="String">
+  	update exam_frame set del_yn = 1 where exf_no = #{exf_no}
+  </update>
+</mapper>
